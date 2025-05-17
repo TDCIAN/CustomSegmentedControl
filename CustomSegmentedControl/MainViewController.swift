@@ -239,7 +239,8 @@ extension MainViewController: UIPageViewControllerDelegate {
         else { return }
         
         currentPage = index
-//        underlineSegmentedControl.selectedSegmentIndex = index
+        
+        underlineSegmentedControl.selectedSegmentIndex = index
         customCornerRadiusSegmentedControl.selectedSegmentIndex = index
     }
 }

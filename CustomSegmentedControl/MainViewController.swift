@@ -32,6 +32,32 @@ class MainViewController: UIViewController {
         return segmentedControl
     }()
     
+    private lazy var customCornerRadiusSegmentedControl: UISegmentedControl = {
+        let segmentedControl = CustomCornerRadiusSegmentedControl(items: ["First", "Second", "Third"])
+        segmentedControl.customCornerRadius = 24
+        segmentedControl.selectedBackgroundColor = .white
+        segmentedControl.normalBackgroundColor = .systemGray5
+        segmentedControl.borderColor = .systemGray5
+        segmentedControl.borderWidth = 1.5
+        
+        segmentedControl.selectedSegmentIndex = 0
+        segmentedControl.setTitleTextAttributes(
+            [
+                NSAttributedString.Key.foregroundColor: UIColor.gray,
+                NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .semibold)
+            ],
+            for: .normal
+        )
+        segmentedControl.setTitleTextAttributes(
+            [
+                NSAttributedString.Key.foregroundColor: UIColor.systemBlue,
+                NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .bold)
+            ],
+            for: .selected
+        )
+        return segmentedControl
+    }()
+    
     private let firstViewController: FirstViewController = FirstViewController()
     private let secondViewController: SecondViewController = SecondViewController()
     private let thirdViewController: ThirdViewController = ThirdViewController()
@@ -78,11 +104,16 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setUI()
-        bind()
+        // MARK: UnderlineSegmentedControl
+        setUIWithUnderlineSegmentedControl()
+        bindWithUnderlineSegmentedControl()
+        
+        // MARK: CustomCornerRadiusSegmentedControl
+//        setUIWithCustomCornerRadiusSegmentedControl()
+//        bindWithCustomCornerRadiusSegmentedControl()
     }
 
-    private func setUI() {
+    private func setUIWithUnderlineSegmentedControl() {
         view.addSubview(underlineSegmentedControl)
         view.addSubview(pageViewController.view)
         
@@ -99,8 +130,36 @@ class MainViewController: UIViewController {
         }
     }
     
-    private func bind() {
+    private func bindWithUnderlineSegmentedControl() {
         underlineSegmentedControl.rx.selectedSegmentIndex
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .subscribe(with: self, onNext: { owner, selectedIndex in
+                print("### subscribe - selectedIndex: \(selectedIndex)")
+                owner.currentPage = selectedIndex
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func setUIWithCustomCornerRadiusSegmentedControl() {
+        view.addSubview(customCornerRadiusSegmentedControl)
+        view.addSubview(pageViewController.view)
+        
+        customCornerRadiusSegmentedControl.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.horizontalEdges.equalToSuperview().inset(4)
+            make.height.equalTo(50)
+        }
+        
+        pageViewController.view.snp.makeConstraints { make in
+            make.top.equalTo(customCornerRadiusSegmentedControl.snp.bottom).offset(5)
+            make.horizontalEdges.equalToSuperview()
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+        }
+    }
+    
+    private func bindWithCustomCornerRadiusSegmentedControl() {
+        customCornerRadiusSegmentedControl.rx.selectedSegmentIndex
             .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
             .subscribe(with: self, onNext: { owner, selectedIndex in
@@ -180,6 +239,7 @@ extension MainViewController: UIPageViewControllerDelegate {
         else { return }
         
         currentPage = index
-        underlineSegmentedControl.selectedSegmentIndex = index
+//        underlineSegmentedControl.selectedSegmentIndex = index
+        customCornerRadiusSegmentedControl.selectedSegmentIndex = index
     }
 }

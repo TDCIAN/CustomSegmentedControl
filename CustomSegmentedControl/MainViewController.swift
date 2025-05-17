@@ -89,13 +89,11 @@ class MainViewController: UIViewController {
         underlineSegmentedControl.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             make.horizontalEdges.equalToSuperview().inset(4)
-            make.height.equalTo(45)
+            make.height.equalTo(50)
         }
-        underlineSegmentedControl.layer.borderColor = UIColor.red.cgColor
-        underlineSegmentedControl.layer.borderWidth = 1
         
         pageViewController.view.snp.makeConstraints { make in
-            make.top.equalTo(underlineSegmentedControl.snp.bottom).offset(15)
+            make.top.equalTo(underlineSegmentedControl.snp.bottom).offset(5)
             make.horizontalEdges.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
